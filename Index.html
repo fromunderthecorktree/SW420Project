@@ -4,13 +4,21 @@
         <title></title>
         <script src="script.js"> </script>
         <script src="jquery-2.2.3.js"> </script>
+        <script src="mask.js"> </script>
         <link rel="stylesheet" href="stylesheet.css" />
     </head>
     <body>
         <h1> JBlazer: Test It!</h1>
         <form>
-            <textarea id="txt1" class="textfield" rows="20" cols="100">Copy and paste code here.</textarea> 
-            <button id="btn" onclick="print()" class="button" type="submit">Submit</button>
+            <label for="nodes">Node list</label> <br>
+            <input type="text" id="nodesTxt" name="nodes"> <br>
+            <label for="startNodes">Starting nodes list</label> <br>
+            <input type="text" id="startTxt" name="startNodes"> <br>
+            <label for="endNodes">Ending nodes list</label> <br>
+            <input type="text" id="endTxt" name="endNodes"> <br>
+            <label for="edgePairs">Edge-pair list</label> <br>
+            <input type="text" id="edgeTxt" name="edgePairs"> <br>
+            <button id="btn" onclick="runSubmit()" class="button">Submit</button>
             <br />
                 <div id="Display">
                 Results will display here.
@@ -19,5 +27,9 @@
         
         <div class="footer">
             &copy 2016 JBlazer - Ryan, Carlos, and Tom
+        </div>
+
+        <script type="text/javascript">
+        </script>
     </body>
 </html>
