@@ -47,3 +47,23 @@
             input{
                 width: 500px;
             }
+
+            #nodeTable {
+                border:2px solid #F8EC0C;
+                border-collapse:collapse;
+                padding:5px;
+                width: 500px;
+                visibility: hidden;
+            }
+            #nodeTable th {
+                border:2px solid #F8EC0C;
+                padding:5px;
+                background:#3FA74F;
+                color: #CD1216;
+            }
+           #nodeTable td {
+                border:2px solid #F8EC0C;
+                padding:5px;
+                background:#EBEBEB;
+                text-align: center;
+            }

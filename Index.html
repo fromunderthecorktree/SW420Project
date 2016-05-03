@@ -9,7 +9,7 @@
     </head>
     <body>
         <h1> JBlazer: Test It!</h1>
-        <form>
+        
             <label for="nodes">Node list</label> <br>
             <input type="text" id="nodesTxt" name="nodes"> <br>
             <label for="startNodes">Starting nodes list</label> <br>
@@ -21,15 +21,33 @@
             <button id="btn" onclick="runSubmit()" class="button">Submit</button>
             <br />
                 <div id="Display">
-                Results will display here.
+                <table id="nodeTable" class="table">
+                    <caption>Nodes overview</caption>
+                    <thead>
+                    <tr>
+                        <th>Node #</th>
+                        <th>Reach</th>
+                        <th>Starting</th>
+                        <th>Ending</th>
+                    </tr> 
+                    </thead>
+                    <tbody>
+                        <!-- NODE INFO -->
+                    </tbody>
+                        
+                </table>
                 </div>
-        </form>
+        
         
         <div class="footer">
             &copy 2016 JBlazer - Ryan, Carlos, and Tom
         </div>
 
         <script type="text/javascript">
+            $("#nodesTxt").mask("0,0,0,0,0,0,0,0,0,00,00,00,00,00,00,00,00,00,00,00");
+            $("#startTxt").mask("0,0,0,0,0,0,0,0,0,00,00,00,00,00,00,00,00,00,00,00");
+            $("#endTxt").mask("0,0,0,0,0,0,0,0,0,00,00,00,00,00,00,00,00,00,00,00");
+            $("#edgeTxt").mask("0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0");
         </script>
     </body>
 </html>

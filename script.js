@@ -7,6 +7,7 @@ var Node = function (reach, number, isFirstNode, isLastNode){
 
 function runSubmit(){
 	var x = initNodes();
+	printNodeList(x);
 }
 
 function initNodes(){
@@ -14,9 +15,6 @@ function initNodes(){
 	setStartingNodes(x);
 	setEndingNodes(x);
 	setReach(x);
-	x.forEach(function(entry){
-		console.log(entry);
-	});
 	return x;
 }
 
@@ -45,4 +43,24 @@ function setReach(list){
 		var nodes = entry.split(",");
 		list[nodes[0]].reach.push(list[nodes[1]]);
 	});
+}
+
+function printNodeList(list){
+	var rows = "";
+	list.forEach(function(entry){
+		var reach = [];
+		for(var i = 0; i < entry.reach.length; i++){
+			reach.push(entry.reach[i].number);
+		}
+		rows += 
+		"<tr>" + 
+			"<td>" + entry.number + "</td>" + 
+			"<td>" + reach.toString() + "</td>" + 
+			"<td>" + entry.isFirstNode + "</td>" + 
+			"<td>" + entry.isLastNode + "</td>" +
+		"</tr>" 
+	});
+	$("#nodeTable").css( "visibility","visible");
+	$("#nodeTable tbody").append(rows);
+	
 }
