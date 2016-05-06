@@ -110,7 +110,7 @@ function runTests(list, elist){
 
 function runEdgePairCoverageRequirements(list){
 	var edgePairList = []
-	var print = "";
+	var print = "Edge Pair Test Requirements <br />";
 	list.forEach(function(entry){
 		var firstNodeInPair = entry.number;		
 		entry.reach.forEach(function(entity){
@@ -138,7 +138,8 @@ function runNodeCoverage(list, elist){
 	allTests.forEach(function(entry){
 		console.log(entry);	
 	});
-	print = "";
+	
+	var print = "Node and Edge Test Paths <br />";
 	
 	allTests.forEach(function (entry){
 		entry.forEach(function(entity){
@@ -149,7 +150,7 @@ function runNodeCoverage(list, elist){
 	
 	
 	
-	$("nodeTable").append(print);
+	$("#nodeTable").append(print);
 	
 	
 	
@@ -308,24 +309,17 @@ function runEdgePair(list, elist){
 		
 		console.log(endTests);
 
-
-
-
-
-
-
-			print = "";
-	
-	allTests.forEach(function (entry){
-		entry.forEach(function(entity){
-			print+= entity.number + ", "
-		});
-		print += "<br />"
-	});
+		var print = "Edge Pair Coverage <br />";
+		
+		
+		for (var key in endTests){
+			print += key + "<br />"
+		}
+		
 	
 	
 	
-	$("edgepairCPath").append(print);
+	$("#edgepairCPath").append(print);
 
 
 	// endTests.forEach(function(entity){
