@@ -101,7 +101,8 @@ function printNodeList(list){
 
 function runTests(list, elist){
 	var edgePairList = runEdgePairCoverageRequirements(list);
-	runNodeCoverage(list, elist);	
+	var nodeAndEdgePath = runNodeCoverage(list, elist);
+	var edgepairPath = runEdgePair(list, edgePairList);	
 	//runEdgeCoverage(list);
 	//runPrimePath(list);
 	//runSimplePath(list);
@@ -109,16 +110,22 @@ function runTests(list, elist){
 
 function runEdgePairCoverageRequirements(list){
 	var edgePairList = []
+	var print = "";
 	list.forEach(function(entry){
 		var firstNodeInPair = entry.number;		
 		entry.reach.forEach(function(entity){
 			var secondNodeInPair = entity.number;
 			entity.reach.forEach(function(end){
 				var lastNodeInPair = end.number;
-				edgePairList.push(EdgePair(firstNodeInPair , secondNodeInPair , lastNodeInPair) );
+				edgePairList.push(new EdgePair(firstNodeInPair , secondNodeInPair , lastNodeInPair) );
+		print+=firstNodeInPair + ", " +secondNodeInPair +", " +lastNodeInPair + "<br />";
 			});
 		});		
 	});	
+	
+	
+	$("#nodeTable").append(print);
+	
 	return edgePairList;
 }
 
@@ -131,10 +138,29 @@ function runNodeCoverage(list, elist){
 	allTests.forEach(function(entry){
 		console.log(entry);	
 	});
+	print = "";
+	
+	allTests.forEach(function (entry){
+		entry.forEach(function(entity){
+			print+= entity.number + ", "
+		});
+		print += "<br />"
+	});
+	
+	
+	
+	$("nodeTable").append(print);
+	
+	
+	
+	
+	
+	
+	
 	// allTests.forEach(function(entity){
 	// 	printNodeList(entity);
 	// });
-	
+	return allTests;
 }
 
 
@@ -265,4 +291,214 @@ function getGoodNodes (finalELists,list){
 	return goodNodes;
 	
 	
+}
+
+
+
+
+
+
+
+
+
+function runEdgePair(list, elist){
+		var allTests = startCheckAllTests2(list, elist);
+		
+		endTests = unique(allTests);
+		
+		console.log(endTests);
+
+
+
+
+
+
+
+			print = "";
+	
+	allTests.forEach(function (entry){
+		entry.forEach(function(entity){
+			print+= entity.number + ", "
+		});
+		print += "<br />"
+	});
+	
+	
+	
+	$("edgepairCPath").append(print);
+
+
+	// endTests.forEach(function(entity){
+	// 	console.log(entity);
+	// });
+	return endTests;
+}
+
+
+
+
+
+//////////////////////////////////////////////////////////////
+function startCheckAllTests2(list, elist){
+	var allTests = [[]];
+	
+	
+	var startingNodes = findstartNodes2 (list);
+	for(var i = 0; i<startingNodes.length; i++ ){
+		allTests[i].push(startingNodes[i]);
+	}
+		//get all of the possible starting positions
+	
+	//find all of the possible next nodes
+	var allTests = checkAllTests2(allTests, list, elist);
+	
+	return allTests;
+	
+}
+
+
+
+function checkAllTests2(allTests, list, elist){
+	
+	for(var i = 0; i < allTests.length; i++){
+	var goodNodes = []
+
+		do{
+			goodNodes = findNextNodeOnASingleTest2(allTests[i], list, elist);
+			
+			console.log ("misc info: Current loop: [" + i + "]; total arrays: ["+allTests.length+"]; good Nodes: [" + goodNodes.length +"];");
+			
+			console.log (goodNodes);
+			console.log(allTests);
+			
+			
+			//if it has more than one, we ignore the first good node, we copy the row, and add the last element
+			for (var j = 1 ; j< goodNodes.length; j++){
+				// var newCopy = (Array) jQuery.extend(true, {}, allTests[i]);
+				var newCopy = allTests[i].slice(0);
+				allTests.push(newCopy);//copy new test over
+				console.log("before extra push");
+					console.log(allTests);
+				
+				allTests[allTests.length-1].push( goodNodes[j]);//add last element
+				console.log("after extra push" +allTests);
+			}
+			
+			//If it has anything, put the first one in place
+			if (goodNodes.length >0){
+				allTests[i].push(goodNodes[0]);
+			}
+			
+			console.log(allTests);
+			
+			allTests.forEach(function(entry){
+				console.log(allTests);
+			});
+			
+			
+		}while(goodNodes.length > 0);
+	}
+	return allTests;
+}
+
+
+function findNextNodeOnASingleTest2(currTest, list, elist){
+	var newestNode = currTest[currTest.length-1];
+	if (newestNode.isLastNode){
+		return []
+	}
+	var possibleElists = filterEList2(newestNode, elist, (currTest.length <3));
+	var goodNodesNumbers = filterPossibleIfDoneAlready2(currTest, possibleElists, list);
+	return goodNodesNumbers;
+}
+
+
+function findstartNodes2(list){
+	var startingNodes = [];
+	for (var i = 1; i< list.length; i++){
+		if( list[i].isFirstNode){
+			startingNodes.push(list[i]);
+		}
+	}
+	return startingNodes;
+	
+}
+
+
+function filterEList2(node, elist, isFirst){
+	var possibleElists = [];
+	for (var i = 0; i< elist.length; i++){
+		if (isFirst){
+			if (elist[i].sourceNode === node.number){// is that how that works
+				possibleElists.push(elist[i]);
+			}
+		}else{
+			
+			if (elist[i].intermediateNode === node.number){// is that how that works
+				possibleElists.push(elist[i]);
+			}
+		}
+	}
+	return possibleElists;
+}
+
+
+var isSecondGo
+
+function filterPossibleIfDoneAlready2(currTest, possibleElists, list){
+	var finalELists = possibleElists;
+	for (var k = 0; k< possibleElists.length; k++){
+		isSecondGo = true;
+			for(var i = 2; i<currTest.length; i++){
+				isSecondGo = false
+				if (currTest [i-2].number === possibleElists[k].sourceNode &&     currTest [i-1].number === possibleElists[k].intermediateNode      && currTest[i].number === possibleElists[k].destNode ){///
+					finalELists.splice(k,1);
+					break;
+				}
+			}
+	
+	}
+	
+	return getGoodNodes2(finalELists, list);
+	
+	
+}
+
+
+
+function getGoodNodes2 (finalELists,list){
+	var goodNodes = [];
+	finalELists.forEach(function (entity){
+		if(!isSecondGo){	
+			goodNodes.push(list[entity.destNode]);	///
+		}else{
+			goodNodes.push(list[entity.intermediateNode]);
+		}
+	});
+
+	return goodNodes;
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+function unique (list) {
+	var uniqueList = [];
+	list.forEach(function(entry){
+		var hash = "";
+		entry.forEach(function(entity){
+			hash+=entity.number+",";
+		});
+		uniqueList [hash] =entry; 
+	});
+	return uniqueList;
 }

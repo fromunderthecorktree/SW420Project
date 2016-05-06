@@ -10,5 +10,10 @@ function EdgePair(source, intermediate, dest){
 
 
 EdgePair.prototype = {
-	constructor: EdgePair
+	constructor: EdgePair,
+    toString: toString
 };
+
+function toString(){
+    return sourceNode +", " +intermediateNode + ", " +destNode;
+}
