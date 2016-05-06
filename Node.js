@@ -13,3 +13,7 @@ function Node(reach, number, isFirstNode, isLastNode){
 Node.prototype = {
 	constructor: Node
 };
+
+function toString(){
+	return number.toString;
+}
