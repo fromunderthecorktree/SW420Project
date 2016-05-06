@@ -105,7 +105,7 @@ function runTests(list, elist){
 	var edgepairPath = runEdgePair(list, edgePairList);	
 	//runEdgeCoverage(list);
 	//runPrimePath(list);
-	//runSimplePath(list);
+	getAllPaths(list);
 }
 
 function runEdgePairCoverageRequirements(list){
@@ -135,9 +135,7 @@ function runEdgePairCoverageRequirements(list){
 
 function runNodeCoverage(list, elist){
 	var allTests = startCheckAllTests(list, elist);
-	allTests.forEach(function(entry){
-		console.log(entry);	
-	});
+
 	
 	var print = "Node and Edge Test Paths <br />";
 	
@@ -193,22 +191,13 @@ function checkAllTests(allTests, list, elist){
 		do{
 			goodNodes = findNextNodeOnASingleTest(allTests[i], list, elist);
 			
-			console.log ("misc info: Current loop: [" + i + "]; total arrays: ["+allTests.length+"]; good Nodes: [" + goodNodes.length +"];");
-			
-			console.log (goodNodes);
-			console.log(allTests);
-			
-			
 			//if it has more than one, we ignore the first good node, we copy the row, and add the last element
 			for (var j = 1 ; j< goodNodes.length; j++){
 				// var newCopy = (Array) jQuery.extend(true, {}, allTests[i]);
 				var newCopy = allTests[i].slice(0);
 				allTests.push(newCopy);//copy new test over
-				console.log("before extra push");
-					console.log(allTests);
 				
 				allTests[allTests.length-1].push( goodNodes[j]);//add last element
-				console.log("after extra push" +allTests);
 			}
 			
 			//If it has anything, put the first one in place
@@ -216,11 +205,6 @@ function checkAllTests(allTests, list, elist){
 				allTests[i].push(goodNodes[0]);
 			}
 			
-			console.log(allTests);
-			
-			allTests.forEach(function(entry){
-				console.log(allTests);
-			});
 			
 			
 		}while(goodNodes.length > 0);
@@ -307,7 +291,6 @@ function runEdgePair(list, elist){
 		
 		endTests = unique(allTests);
 		
-		console.log(endTests);
 
 		var print = "Edge Pair Coverage <br />";
 		
@@ -322,9 +305,6 @@ function runEdgePair(list, elist){
 	$("#edgepairCPath").append(print);
 
 
-	// endTests.forEach(function(entity){
-	// 	console.log(entity);
-	// });
 	return endTests;
 }
 
@@ -360,22 +340,14 @@ function checkAllTests2(allTests, list, elist){
 		do{
 			goodNodes = findNextNodeOnASingleTest2(allTests[i], list, elist);
 			
-			console.log ("misc info: Current loop: [" + i + "]; total arrays: ["+allTests.length+"]; good Nodes: [" + goodNodes.length +"];");
-			
-			console.log (goodNodes);
-			console.log(allTests);
-			
-			
+				
 			//if it has more than one, we ignore the first good node, we copy the row, and add the last element
 			for (var j = 1 ; j< goodNodes.length; j++){
 				// var newCopy = (Array) jQuery.extend(true, {}, allTests[i]);
 				var newCopy = allTests[i].slice(0);
 				allTests.push(newCopy);//copy new test over
-				console.log("before extra push");
-					console.log(allTests);
 				
 				allTests[allTests.length-1].push( goodNodes[j]);//add last element
-				console.log("after extra push" +allTests);
 			}
 			
 			//If it has anything, put the first one in place
@@ -383,11 +355,7 @@ function checkAllTests2(allTests, list, elist){
 				allTests[i].push(goodNodes[0]);
 			}
 			
-			console.log(allTests);
 			
-			allTests.forEach(function(entry){
-				console.log(allTests);
-			});
 			
 			
 		}while(goodNodes.length > 0);
@@ -495,4 +463,118 @@ function unique (list) {
 		uniqueList [hash] =entry; 
 	});
 	return uniqueList;
+}
+
+
+
+
+
+
+
+
+
+
+
+var finalList = [];
+var prefix = "";
+function getAllPaths(list){
+    for(var i = 1; i <= list.length -1; i++){
+        prefix = "";
+        if(i == 1){
+            yolo(list[1], null, list);
+        }else{
+            yolo(list[i], list[i - 1], list);
+        }
+    }
+    removeInvalidEntries();
+    console.log(finalList);
+}
+ 
+function yolo(node, aimedBy, list){
+    if(prefix == ""){
+        prefix = node.number.toString();
+    }else{
+        var lastPrefix = prefix.split(',')[prefix.split(',').length - 1];
+        var lastNode = list[lastPrefix];
+        var aimedByLastNode = false;
+       
+        if(lastNode.reach.length > 0){
+            lastNode.reach.forEach(function (entry){
+                if(entry.number == node.number){
+                    aimedByLastNode = true;
+                }
+            });
+        }
+ 
+        if(aimedByLastNode){
+            if(prefix.split(',').indexOf(node.number.toString()) >= 0){
+                if(prefix.charAt(0) == node.number.toString() && prefix.length < 4){
+                    prefix += "," + node.number.toString();
+                    finalList.push(prefix);
+                    if(countRepeatedTimes(prefix.split(','), node.number.toString()) >= 2){
+                        return;
+                    }
+                }else{
+                    return;
+                }
+            }else{
+                prefix += "," + node.number.toString();
+            }  
+        }else{
+            prefix = prefix.substring(0, prefix.indexOf(aimedBy.number) + 1) + "," + node.number.toString();
+        }
+    }
+ 
+    finalList.push(prefix);
+    if(node.reach.length > 0){
+        node.reach.forEach(function (entry){
+            yolo(entry, node, list);
+        });
+    }
+}
+ 
+function countRepeatedTimes(list, element){
+    var count = 0;
+    list.forEach(function (entry){
+        if(entry == element){
+            count ++;
+        }
+    });
+    return count;
+}
+ 
+function removeInvalidEntries(){
+    var filtered = {};
+    var returnArr = [];
+    finalList.forEach(function (path){
+        var arr = path.split(',');
+       
+        arr.forEach(function (entry){
+            var count = 0;
+            arr.forEach(function (allEntries){
+                if(entry == allEntries){
+                    count ++;
+                }
+            });
+            if(count > 1){
+                if(path[0] == entry && path[path.length-1] == entry){
+                    filtered[path] = {'path' : path, 'valid': true};
+                }else{
+                    filtered[path] = {'path' : path, 'valid': false};
+                }
+            }else{
+                if(filtered[path] == null){
+                    filtered[path] = {'path' : path, 'valid': true};
+                }      
+            }
+        });
+    });
+ 
+    for (var key in filtered) {
+        if(filtered[key].valid){
+            returnArr.push(filtered[key].path);
+            console.log(filtered[key].path);
+        }
+    }
+    finalList = returnArr;
 }
